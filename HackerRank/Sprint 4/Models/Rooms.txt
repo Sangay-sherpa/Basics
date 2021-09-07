@@ -1,0 +1,14 @@
+namespace PgBooking.Models
+{
+    public class Rooms
+    {
+        public long ID{get;set;}
+        public int ocuupancy{get;set;}
+        public int availability{get;set;}
+        public double rentPrice{get;set;}
+
+        public long pgid{get;set;}
+
+        public   PG pG{get;set;}
+    }
+}

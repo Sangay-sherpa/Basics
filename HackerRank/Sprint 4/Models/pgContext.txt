@@ -1,0 +1,41 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
+namespace PgBooking.Models
+{
+    public class pgContext : DbContext
+    {
+        public pgContext(DbContextOptions<pgContext> options) : base(options){}
+          protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+             modelBuilder.Entity<ApplicationUser>()
+               .HasKey(u => u.userName);
+            //         .ValueGeneratedOnAdd();
+            //  modelBuilder.Entity<Student>()
+            // .HasOne<Grade>(s => s.Grade)
+            // .WithMany(g => g.Students)
+            // .HasForeignKey(s => s.CurrentGradeId);
+             modelBuilder.Entity<PG>().HasKey(p => p.ID);
+            modelBuilder.Entity<PG>()
+            .HasMany<Rooms>(r => r.rooms)
+            .WithOne(r => r.pG)
+            .HasForeignKey(r => r.pgid);
+
+            modelBuilder.Entity<Rooms>()
+            .HasKey(p=>p.ID);
+            // .HasOne<PG>(p => p.pG)
+            // .WithMany(r=>r.rooms)
+            //  .HasForeignKey(p => p.pgid);
+        }
+
+        public DbSet<ApplicationUser> user{get;set;}
+         public DbSet<PG> pg{get;set;}
+
+        public DbSet<Rooms> rooms{get;set;}
+
+
+    }
+
+    
+}

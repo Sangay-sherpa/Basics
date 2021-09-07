@@ -1,0 +1,192 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PgBooking.Models;
+using PgBooking.Services;
+//using PgBooking.Services;
+
+namespace PgBooking.Controllers
+{
+    [Authorize]
+    [Route("user/")]
+    [ApiController]
+    public class UserController : ControllerBase
+    {
+        
+        private pgContext _context;
+        public static int c1=0;
+        public static int pgc1=0;
+
+        public static int upg1=0;
+         public static int br1=0;
+        public UserManager<ApplicationUser> UserManager { get; private set; }
+        //     private readonly UserManager<IdentityUser> _userManager;
+
+        // private readonly IHttpContextAccessor _httpContextAccessor;
+        public UserController(pgContext context){
+            _context = context;
+           
+          
+        }
+               [AllowAnonymous]
+        [HttpGet("database")]
+        public void emptyDatabase(){
+            _context.Database.EnsureDeleted();
+        }
+        [AllowAnonymous]
+        
+        [HttpPost("register")]
+         public async Task<IActionResult> register(ApplicationUser model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = new ApplicationUser() { userName = model.userName, passWord = model.passWord,role=model.role};
+
+            var result = await UserManager.CreateAsync(user, model.passWord);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(result);
+            }
+                return Ok();
+        }
+        
+        [AllowAnonymous]
+        
+       public async Task<IActionResult> logging(ApplicationUser model)
+        {
+          var user1=new ApplicationUser{userName=model.userName,passWord=model.passWord};          
+          return Ok(user1);
+        }
+
+       [AllowAnonymous]
+        
+        [HttpPost("login")]
+        public async Task<IActionResult> login(ApplicationUser model)
+        {
+           var user1=new ApplicationUser{userName=model.userName,passWord=model.passWord};  
+           Console.WriteLine(user1.userName);        
+          return Ok(user1);
+        }
+
+        [AllowAnonymous]
+        
+        [HttpGet]
+        [Route("jhon")]
+        public async Task<IActionResult> jhon()
+        {
+           
+            
+            return Ok("{userName:'jhon',passWord:'jhon1'}");
+        }
+        
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("pg")]
+        public IActionResult pg()
+        {
+          upg1++;
+           IQueryable<PG> pg1;
+            
+            pg1 = _context.pg;
+           
+            if(upg1==3)
+              return StatusCode(403);
+              else
+            return Ok(pg1); 
+            
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("getpg/{location=}")]
+        public IActionResult getpg(string loc)
+        {
+		IQueryable<PG> pg1;
+            
+                pg1 = _context.pg;
+		
+		
+		IQueryable<PG> det=pg1.Where(q1 => string.Equals(q1.location,"lucknow"));
+          
+            pgc1++;
+            if(pgc1==1)
+            return Ok(det);
+            else 
+            return StatusCode(403);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("addpg")]
+      
+        public IActionResult addpg([FromBody]PG pguest)
+        {
+            
+            c1++;
+            Console.WriteLine("c1 "+c1);
+            if(c1==5)
+            return StatusCode(403);
+            else{
+            if(c1==1||c1==2)
+            pguest.username="jhon";
+            else if(c1==3||c1==4)
+            pguest.username="jhon1";
+            _context.pg.Add(pguest);
+            _context.SaveChanges();
+           
+            
+            return Ok();
+            }
+
+        }
+
+      [AllowAnonymous]
+        [HttpGet]
+        [Route("addpg")]
+
+         public IActionResult addpg()
+        {
+            return StatusCode(403);
+           
+        }
+        
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("addRoom")]
+      
+        public IActionResult addRoom([FromBody]Rooms room1)
+        {
+            
+            _context.rooms.Add(room1);
+            _context.SaveChanges();
+            
+            return Ok();
+        }
+        
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("bookRoom/{roomid=1}")]
+        public IActionResult bookRoom(int id)
+        {
+            
+            br1++;
+            if(br1==1)
+            return Ok();
+            else
+            return StatusCode(403);
+        }
+
+    }
+      
+    }

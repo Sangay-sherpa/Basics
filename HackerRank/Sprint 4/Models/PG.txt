@@ -1,0 +1,14 @@
+using System.Collections.Generic;
+
+namespace PgBooking.Models
+{
+    public class PG
+    {
+        public long ID{get;set;}
+        public string pgName{get;set;}
+        public string location{get;set;}
+        public string  username{get;set;}
+       public  IList<Rooms> rooms{get;set;} = new List<Rooms>();
+
+    }
+}
